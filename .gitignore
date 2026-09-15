@@ -1,0 +1,20 @@
+# Visual Studio hidden configuration and cache directories
+.vs/
+*/.vs/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+
+# Visual Studio build artifacts and temporary files
+*.obj
+*.pdb
+*.ilk
+*.idb
+*.iobj
+*.ipdb
+*.ipch
+*.log
+*.tlog
+*.exe
+*.dll
