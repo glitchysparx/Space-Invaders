@@ -5,7 +5,7 @@ A small Space Invaders-style game written in C++ as a programming exercise.
 The project focuses on gameplay architecture, object lifecycle, resource management,
 collision handling, UI/HUD, audio, and simple visual effects.
 
-**Original implementation time:** approximately 25 hours.
+**Original implementation time:** approximately 28 hours.
 
 The project was later revisited for minor cleanup and presentation as a code sample;
 that time is not included in the estimate.
