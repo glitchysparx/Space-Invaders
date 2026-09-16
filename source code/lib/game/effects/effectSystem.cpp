@@ -1,10 +1,10 @@
 #include "effectSystem.h"
 
 
-void Effect::Construct(ResourceManager* _resourceManager)
+void Effect::Construct(ResourceManager* resourceManager)
 {
-	if (resourceManager || !_resourceManager) { return; }
-	Object::Construct(_resourceManager);
+	if (!resourceManager) { return; }
+	this->resourceManager = resourceManager;
 
 	OnConstruct();
 	OnPostConstruct();
@@ -31,7 +31,7 @@ void Effect::Draw()
 	auto& frame = GetActualFrame();
 	sprite = resourceManager->GetSprite(frame.imagePath);
 	Vector2D targetLocation = location + frame.offset;
-	DrawSprite(sprite, targetLocation.x, targetLocation.y, frame.size.x, frame.size.y, frame.angle, frame.tint);
+	DrawSprite(sprite, targetLocation.x, targetLocation.y, frame.size.x/2, frame.size.y/2, frame.angle, frame.tint);
 }
 
 const AnimationFrame& Effect::GetActualFrame() const
@@ -48,6 +48,13 @@ void Effect::OnPostConstruct()
 }
 
 
+
+void VFXSystem::Construct(ResourceManager* resourceManager)
+{
+	if (!resourceManager) { return; }
+
+	this->resourceManager = resourceManager;
+}
 
 void VFXSystem::Tick(size_t frameID)
 {

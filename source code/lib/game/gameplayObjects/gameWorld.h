@@ -32,20 +32,20 @@ protected:
 class GameWorld : public Object
 {
 public:
-	void Construct(ResourceManager* _resourceManager) override;
+	void Construct(ResourceManager* resourceManager);
 
 	void BeginPlay() override;
 
 	void Tick(size_t frameID) override;
 
-	void Draw() override;
+	void Draw();
 
 	void EndPlay(EndPlayReason reason) override;
 
 protected:
 	Player player;
 	EnemyManager enemyManager;
-	ScoreSystem score;
+	ScoreSystem scoreSystem;
 	HUD hud;
 	VFXSystem vfxSystem;
 

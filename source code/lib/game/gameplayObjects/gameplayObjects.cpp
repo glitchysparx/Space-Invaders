@@ -1,13 +1,14 @@
 #include "gameplayObjects.h"
+#include <algorithm>
 
-void Bullet::Construct(ResourceManager* _resourceManager)
+void Bullet::Construct(ResourceManager* resourceManager)
 {
-	if (!_resourceManager || sprite) { return; }
-	Object::Construct(_resourceManager);
+	if (!resourceManager || sprite) { return; }
 
 	sprite = resourceManager->GetSprite("gfx/characters/bullet.png");
-	bCollisionEnabled = true;
 	soundShoot = resourceManager->GetSound("sounds/sfx/laserShoot.wav", false);
+
+	bCollisionEnabled = true;
 	size = Vector2D(16.f);
 	collisionSize = size;
 }
@@ -37,9 +38,8 @@ void Bullet::BeginPlay()
 
 
 
-void ScoreSystem::Construct(ResourceManager* _resourceManager)
+void ScoreSystem::Construct()
 {
-	Object::Construct(_resourceManager);
 	highScore = LoadHighScore();
 }
 
@@ -94,13 +94,13 @@ void ScoreSystem::SaveHighScore(const int value)
 
 
 
-void Player::Construct(ResourceManager* _resourceManager)
+void Player::Construct(ResourceManager* resourceManager)
 {
-	if (!_resourceManager || sprite) { return; }
-	Object::Construct(_resourceManager);
+	if (!resourceManager || sprite) { return; }
 
 	sprite = resourceManager->GetSprite("gfx/characters/Big Invader.png");
-	LoadAmmo();
+
+	ConstructAmmo(resourceManager);
 
 	location = Vector2D(400.f, 550.f);
 	size = Vector2D(64.f);
@@ -126,7 +126,7 @@ void Player::Tick(size_t frameID)
 void Player::Draw()
 {
 	if (!IsAlive()) { return; }
-	Object::Draw();
+	Actor::Draw();
 
 	DrawAmmo();
 }
@@ -152,7 +152,7 @@ bool Player::CheckShouldShoot()
 	return false;
 }
 
-void Player::UpdatePosition(float frameID)
+void Player::UpdatePosition(size_t frameID)
 {
 	Vector2D targetLocation = location;
 	targetLocation.x += IsKeyDown(VK_LEFT) ? -7 : IsKeyDown(VK_RIGHT) ? 7 : 0;
@@ -167,7 +167,7 @@ void Player::UpdatePosition(float frameID)
 	angle = sin(frameID * 0.1) * 0.1;
 }
 
-void Player::LoadAmmo()
+void Player::ConstructAmmo(ResourceManager* resourceManager)
 {
 	for (Bullet& bullet : ammo)
 	{
@@ -175,7 +175,7 @@ void Player::LoadAmmo()
 	}
 }
 
-void Player::UpdateAmmo(float frameID)
+void Player::UpdateAmmo(size_t frameID)
 {
 	for (Bullet& bullet : ammo)
 	{
@@ -201,16 +201,16 @@ void Player::DrawAmmo()
 
 
 
-void Enemy::Construct(ResourceManager* _resourceManager)
+void Enemy::Construct(ResourceManager* resourceManager, VFXSystem* vfxSystem)
 {
-	if (!_resourceManager || sprite) { return; }
-	Object::Construct(_resourceManager);
+	if (!resourceManager || sprite) { return; }
+
+	this->vfxSystem = vfxSystem;
 
 	sprite = resourceManager->GetSprite("gfx/characters/Little Invader.png");
 	soundExplosion = resourceManager->GetSound("sounds/sfx/collision.wav", false);
 
 	bCollisionEnabled = true;
-
 	tint = Color::Red;
 }
 
@@ -239,38 +239,48 @@ void Enemy::EndPlay(EndPlayReason reason)
 
 void Enemy::UpdateLocation(size_t frameID)
 {
-	offsetX = 0.0f;
-	offsetY = 0.0f;
+	animOffset = Vector2D(0.0f);
 
 	const int n1 = frameID + ID * ID + ID * ID * ID;
 	const int n2 = frameID + ID + ID * ID + ID * ID * ID * 3;
 
 	if (IsOrbitPhaseActive(n1))
 	{
-		offsetX += (1.0f - cosf((n1 & 0x7f) / 64.0f * 2.0f * PI)) * (20.0f + ((ID * ID) % 9));
-		offsetY += sinf((n1 & 0x7f) / 64.0f * 2.0f * PI) * (20.0f + ((ID * ID) % 9));
+		animOffset.x += (1.0f - cosf((n1 & 0x7f) / 64.0f * 2.0f * PI)) * (20.0f + ((ID * ID) % 9));
+		animOffset.y += sinf((n1 & 0x7f) / 64.0f * 2.0f * PI) * (20.0f + ((ID * ID) % 9));
 	}
 
 	if (IsDivePhaseActive(n2))
 	{
-		offsetY += (1.0f - cosf((n2 & 0xff) / 256.0f * 2.0f * PI)) * (150.0f + ((ID * ID) % 9));
+		animOffset.y += (1.0f - cosf((n2 & 0xff) / 256.0f * 2.0f * PI)) * (150.0f + ((ID * ID) % 9));
 	}
 
-	location.x = baseX + offsetX;
-	location.y = baseY + offsetY;
+	Vector2D tmpLocation;
+	tmpLocation = baseLocation + animOffset + formationOffset;
+
+	if (tmpLocation.x - size.x / 2 >= 0 && tmpLocation.x + size.x / 2 <= gameWindow.width)
+	{
+		location.x = tmpLocation.x;
+	}
+
+	if (tmpLocation.y - size.y / 2 >= 0 && tmpLocation.y + size.y / 2 <= gameWindow.height)
+	{
+		location.y = tmpLocation.y;
+	}
 }
 
 
 
-void EnemyManager::Construct(ResourceManager* _resourceManager)
+void EnemyManager::Construct(ResourceManager* resourceManager, VFXSystem* vfxSystem)
 {
-	if (!_resourceManager || sprite) { return; }
-	Object::Construct(_resourceManager);
+	if (!resourceManager) { return; }
+
+	this->vfxSystem = vfxSystem;
 
 	int ID = 0;
 	for (Enemy& enemy : enemies)
 	{
-		enemy.Construct(resourceManager);
+		enemy.Construct(resourceManager, vfxSystem);
 		enemy.SetID(ID);
 		enemy.SetSize(ID);
 		enemy.SetBaseLocation(ID);
@@ -283,8 +293,11 @@ void EnemyManager::Tick(size_t frameID)
 {
 	if (!IsAlive()) { return; }
 
+	UpdateFormation();
+
 	for (Enemy& enemy : enemies)
 	{
+		enemy.SetFormationOffset(formationOffset);
 		enemy.Tick(frameID);
 	}
 }
@@ -308,6 +321,8 @@ void EnemyManager::BeginPlay()
 	{
 		enemy.BeginPlay();
 	}
+
+	UpdateFormationSpeed();
 }
 
 void EnemyManager::EndPlay(EndPlayReason reason)
@@ -322,13 +337,51 @@ void EnemyManager::EndPlay(EndPlayReason reason)
 	Object::EndPlay(reason);
 }
 
-void EnemyManager::SetVFXSystem(VFXSystem* _vfxSystem)
+void EnemyManager::UpdateFormationSpeed()
 {
-	if (!_vfxSystem) { return; }
+	float aliveRatio = static_cast<float>(GetAliveEnemyCount()) / static_cast<float>(maxEnemyCount);
 
-	vfxSystem = _vfxSystem;
-	for (Enemy& enemy : enemies)
+	formationSpeed = formationSpeedRange.y -(formationSpeedRange.y - formationSpeedRange.x) * aliveRatio;
+}
+
+int EnemyManager::GetAliveEnemyCount() const
+{
+	if (!IsAlive()) { return 0; }
+
+	int count = 0;
+	for (const Enemy& enemy : enemies)
 	{
-		enemy.SetVFXSystem(vfxSystem);
+		count += enemy.IsAlive() ? 1 : 0;
+	}
+	return count;
+}
+
+void EnemyManager::UpdateFormation()
+{
+	formationOffset.x += formationSpeed * movementDirection;
+
+	if (HasFormationReachedScreenEdge())
+	{
+		movementDirection *= -1;
+		formationOffset.y += dropDistance;
 	}
 }
+
+bool EnemyManager::HasFormationReachedScreenEdge() const
+{
+	float minX = FLT_MAX;
+	float maxX = -FLT_MAX;
+
+	for (const Enemy& enemy : enemies)
+	{
+		if (!enemy.IsAlive()) { continue; }
+
+		const float x = enemy.GetBaseLocation().x + formationOffset.x;
+
+		minX = (std::min)(minX, x - enemy.GetSize().x / 2.0f);
+		maxX = (std::max)(maxX, x + enemy.GetSize().x / 2.0f);
+	}
+
+	return minX <= 0 || maxX >= gameWindow.width;
+}
+

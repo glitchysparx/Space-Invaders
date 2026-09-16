@@ -34,14 +34,9 @@ enum class EndPlayReason
 class Object
 {
 public:
-	// Object is constracted but not alive
-	virtual void Construct(ResourceManager* _resourceManager)
-	{
-		resourceManager = _resourceManager;
-	}
+	virtual ~Object() = 0;
 
-	virtual void Tick(size_t frameID) = 0;
-	virtual void Draw();
+	virtual void Tick(size_t frameID) {}
 
 	// Object is considered alive only at this step
 	virtual void BeginPlay() 
@@ -53,12 +48,26 @@ public:
 	virtual void EndPlay(EndPlayReason reason)
 	{
 		bIsAlive = false;
-		bCollisionEnabled = false;
 	}
 
-	virtual ~Object() = default;
-
 	bool IsAlive() const { return bIsAlive; }
+
+protected:
+	bool bIsAlive = false;
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Base class for spatial objects
+class Actor : public Object
+{
+public:
+	~Actor() override = 0;
+
+	void EndPlay(EndPlayReason reason) override;
+
+	// Render the sprite
+	virtual void Draw();
 
 	Vector2D GetLocation() const { return location; }
 	void SetLocation(Vector2D newLocation) { location = newLocation; }
@@ -84,9 +93,6 @@ public:
 	bool IsFullyOnScreen(Vector2D targetLocation) const;
 
 protected:
-	ResourceManager* resourceManager = nullptr;
-
-	bool bIsAlive = false;
 	bool bCollisionEnabled = false;
 
 	SpriteHandler sprite = nullptr;

@@ -4,18 +4,13 @@
 void ScreenFrameRenderer::Draw()
 {
 	DrawLine(0.f, 0.f, 0.f, gameWindow.height, tint); // left vertical line
-	//DrawLine(0.f, 0.f, gameWindow.width, 0.f, tint); // top horizontal line
-	//DrawLine(0.f, gameWindow.height, gameWindow.width, gameWindow.height, tint); // bottom horizontal line
 	DrawLine(gameWindow.width - 1.f, 0.f, gameWindow.width - 1.f, gameWindow.height, tint); // right vertical line
 }
 
 
 
-void FinalStatusRenderer::Construct(ResourceManager* _resourceManager)
+void FinalStatusRenderer::Construct()
 {
-	if (resourceManager || !_resourceManager) { return; }
-	Object::Construct(_resourceManager);
-
 	textRenderer.FindFont(fontSize);
 	location = Vector2D(0.f, 280.f);
 }
@@ -85,15 +80,13 @@ void FinalStatusRenderer::ExecuteTextAnimation(size_t frameID)
 
 
 
-void HUD::Construct(ResourceManager* _resourceManager)
+void HUD::Construct(ResourceManager* resourceManager)
 {
-	if (resourceManager || !_resourceManager) { return; }
-	Object::Construct(_resourceManager);
+	if (!resourceManager) { return; }
 
-	title.Construct(_resourceManager);
-	screenFrame.Construct(_resourceManager);
-	score.Construct(_resourceManager);
-	finalStatus.Construct(_resourceManager);
+	title.Construct(resourceManager);
+	score.Construct();
+	finalStatus.Construct();
 }
 
 void HUD::Tick(size_t frameID)
@@ -123,7 +116,6 @@ void HUD::BeginPlay()
 	title.BeginPlay();
 	screenFrame.BeginPlay();
 	score.BeginPlay();
-	//finalStatus.BeginPlay(); // There is no need to leave the finalStatus object alive during the gameplay. Small optimization
 }
 
 void HUD::EndPlay(EndPlayReason reason)
@@ -137,14 +129,13 @@ void HUD::EndPlay(EndPlayReason reason)
 
 
 
-void TitleRenderer::Construct(ResourceManager* _resourceManager)
+void TitleRenderer::Construct(ResourceManager* resourceManager)
 {
-	if (resourceManager || !_resourceManager) { return; }
-	Object::Construct(_resourceManager);
+	if (!resourceManager) { return; }
 
 	letters[0] = resourceManager->GetSprite("gfx/textSprites/slet.png");
 	letters[1] = resourceManager->GetSprite("gfx/textSprites/plet.png");
-	letters[2] = _resourceManager->GetSprite("gfx/textSprites/alet.png");
+	letters[2] = resourceManager->GetSprite("gfx/textSprites/alet.png");
 	letters[3] = resourceManager->GetSprite("gfx/textSprites/clet.png");
 	letters[4] = resourceManager->GetSprite("gfx/textSprites/elet.png");
 	letters[5] = nullptr; // space
@@ -180,11 +171,8 @@ void TitleRenderer::Draw()
 
 
 
-void ScoreRenderer::Construct(ResourceManager* _resourceManager)
+void ScoreRenderer::Construct()
 {
-	if (resourceManager || !_resourceManager) { return; }
-	Object::Construct(_resourceManager);
-
 	textRenderer.FindFont(fontSize);
 	location = Vector2D(0.f, StartY);
 	tint = Color::Yellow;

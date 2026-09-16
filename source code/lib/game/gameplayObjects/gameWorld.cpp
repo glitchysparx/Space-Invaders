@@ -1,23 +1,20 @@
 #include "gameWorld.h"
 
 
-void GameWorld::Construct(ResourceManager* _resourceManager)
+void GameWorld::Construct(ResourceManager* resourceManager)
 {
-	if (resourceManager || !_resourceManager) { return; }
-	Object::Construct(_resourceManager);
+	if (!resourceManager) { return; }
 
 	backgroundSound.Construct(resourceManager);
 	vfxSystem.Construct(resourceManager);
-	player.SetVFXSystem(&vfxSystem);
-	enemyManager.SetVFXSystem(&vfxSystem);
 
 	player.Construct(resourceManager);
-	enemyManager.Construct(resourceManager);
-	score.Construct(resourceManager);
+	enemyManager.Construct(resourceManager, &vfxSystem);
+	scoreSystem.Construct();
 	hud.Construct(resourceManager);
 
 	// Cache the highest achieved score into HUD
-	hud.SetHighScore(score.GetHighScore());
+	hud.SetHighScore(scoreSystem.GetHighScore());
 }
 
 void GameWorld::BeginPlay()
@@ -28,7 +25,7 @@ void GameWorld::BeginPlay()
 	vfxSystem.BeginPlay();
 	player.BeginPlay();
 	enemyManager.BeginPlay();
-	score.BeginPlay();
+	scoreSystem.BeginPlay();
 	hud.BeginPlay();
 
 	status.Set(GameStatus::Status::Playing);
@@ -67,7 +64,7 @@ void GameWorld::EndPlay(EndPlayReason reason)
 {
 	player.EndPlay(reason);
 	enemyManager.EndPlay(reason);
-	score.EndPlay(reason);
+	scoreSystem.EndPlay(reason);
 	hud.EndPlay(reason);
 	vfxSystem.EndPlay(reason);
 	Object::EndPlay(reason);
@@ -75,11 +72,13 @@ void GameWorld::EndPlay(EndPlayReason reason)
 
 void GameWorld::CheckCollisions()
 {
-	// Collision detection is not complex for this game. All the sprites are alligned, there is no point to worry about rotations, so AABB (axis alligned bounding box) is enough. 
-	// AABB collision detection is so simple but the most interesting question is filtering. What exact boxes should we check? There are 2 options:
+	// Collision detection is not complex for this game. All the sprites are alligned, there is no point to worry about rotations, 
+	// so AABB (axis alligned bounding box) is enough. AABB collision detection is so simple but the most interesting question is 
+	// filtering. What exact boxes should we check? There are 2 options:
 	// 1. Brute force - check every bullet against every enemy each frame
 	// 2. Smart filters - reduce the number of candidate pairs
-	// For this game the brute force method should be enough because there is no need to optimize that. There are only 10 bullets and 50 enemies. So, 10 * 50 = 500 checks per frame. 500 checks/frame × 60 = 30,000 checks/second. 
+	// For this game the brute force method should be enough. There are only 10 bullets and 50 enemies. 
+	// So, 10 * 50 = 500 checks per frame. 500 checks/frame × 60 = 30,000 checks/second. 
 	// For such trivial AABB overlap tests, that is nothing on modern hardware
 
 	CheckPlayerBulletsAgainstEnemies();
@@ -106,8 +105,9 @@ void GameWorld::CheckPlayerBulletsAgainstEnemies()
 			{
 				bullet.EndPlay(EndPlayReason::Destroyed);
 				enemy.EndPlay(EndPlayReason::Destroyed);
-				score.AddScore(enemy.GetReward());
-				hud.SetScore(score.GetScore());
+				enemyManager.UpdateFormationSpeed();
+				scoreSystem.AddScore(enemy.GetReward());
+				hud.SetScore(scoreSystem.GetScore());
 				break;
 			}
 		}

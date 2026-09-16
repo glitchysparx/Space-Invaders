@@ -27,7 +27,7 @@ struct AnimationFrame
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // 2D VFX animation
-class Effect : public Object
+class Effect : public Actor
 {
 public:
 	Effect(Vector2D _location)
@@ -37,7 +37,7 @@ public:
 
 	virtual void OnConstruct() = 0;
 
-	void Construct(ResourceManager* _resourceManager) override;
+	void Construct(ResourceManager* resourceManager);
 
 	void Tick(size_t frameID) override;
 
@@ -55,6 +55,8 @@ protected:
 	size_t animLength = 1;
 	size_t uniformFrameDuration = 1;
 
+	ResourceManager* resourceManager = nullptr;
+
 private:
 	void OnPostConstruct();
 };
@@ -64,9 +66,11 @@ private:
 class VFXSystem : public Object
 {
 public:
+	void Construct(ResourceManager* resourceManager);
+
 	void Tick(size_t frameID) override;
 
-	void Draw() override;
+	void Draw();
 
 	void PlayEffect(std::unique_ptr<Effect> effect);
 
@@ -74,5 +78,7 @@ public:
 
 protected:
 	std::vector<std::unique_ptr<Effect>> effects;
+
+	ResourceManager* resourceManager = nullptr;
 };
 

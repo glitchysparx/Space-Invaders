@@ -445,11 +445,11 @@ void SetCurrentTexture(void *tex )
 	g_pd3dDevice->SetTexture(0,t);
 }
 
-void DrawSprite(void *sprite, float xcentre, float ycentre, float halfWidth, float halfHeight, float angle, DWORD col )
+void DrawSprite(void *sprite, float xcentre, float ycentre, float halfWidth, float halfHeight, float rotate_angle_radians, DWORD col )
 {
 	SetCurrentTexture(sprite);
-	float c=cosf(angle);
-	float s=sinf(angle);
+	float c=cosf(rotate_angle_radians);
+	float s=sinf(rotate_angle_radians);
 #define ROTATE(xx,yy) xcentre+(xx)*c+(yy)*s,ycentre+(yy)*c-(xx)*s 
 	CUSTOMVERTEX tea2[] =
 	{

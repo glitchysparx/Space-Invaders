@@ -6,10 +6,10 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Renders the game title and processed its animation
-class TitleRenderer : public Object
+class TitleRenderer : public Actor
 {
 public:
-	void Construct(ResourceManager* _resourceManager) override;
+	void Construct(ResourceManager* resourceManager);
 
 	void Tick(size_t frameID) override;
 
@@ -31,12 +31,10 @@ protected:
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Text version of the score renderer
-class ScoreRenderer : public Object
+class ScoreRenderer : public Actor
 {
 public:
-	void Construct(ResourceManager* _resourceManager) override;
-
-	void Tick(size_t frameID) override {};
+	void Construct();
 
 	void Draw() override;
 
@@ -72,21 +70,19 @@ protected:
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Renders the screen frame. Screen size is described in gameWindow global object.
-class ScreenFrameRenderer : public Object
+class ScreenFrameRenderer : public Actor
 {
 public:
-	void Tick(size_t frameID) override {};
-
-	void Draw() override;
+	void Draw();
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Renders the game final result and processed its animation
-class FinalStatusRenderer : public Object
+class FinalStatusRenderer : public Actor
 {
 public:
-	void Construct(ResourceManager* _resourceManager) override;
+	void Construct();
 
 	void Tick(size_t frameID) override;
 
@@ -112,11 +108,11 @@ protected:
 class HUD : public Object
 {
 public:
-	void Construct(ResourceManager* _resourceManager) override;
+	void Construct(ResourceManager* resourceManager);
 
 	void Tick(size_t frameID) override;
 
-	void Draw() override;
+	void Draw();
 
 	void BeginPlay() override;
 

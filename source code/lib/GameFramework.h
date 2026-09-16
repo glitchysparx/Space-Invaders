@@ -41,7 +41,7 @@ bool IsKeyDown(int key); // use windows VK_ codes for special keys, eg VK_LEFT; 
 
 // 'sprite output' 
 void* LoadSprite(const char *fname);
-void DrawSprite(void *sprite, float xcentre, float ycentre, float xsize, float ysize, float rotate_angle_radians=0, DWORD tint_col_argb = 0xffffffff);
+void DrawSprite(void *sprite, float xcentre, float ycentre, float halfWidth, float halfHeight, float rotate_angle_radians=0, DWORD tint_col_argb = 0xffffffff);
 void DrawLine(float x1, float y1, float x2, float y2, DWORD col);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

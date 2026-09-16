@@ -7,13 +7,12 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Object representating the bullet used by Player object
-class Bullet : public Object
+class Bullet : public Actor
 {
 public:
-	void Construct(ResourceManager* _resourceManager) override;
+	void Construct(ResourceManager* _resourceManager);
 
 	void Tick(size_t frameID) override;
-
 	void BeginPlay() override;
 
 protected:
@@ -26,10 +25,9 @@ protected:
 class ScoreSystem : public Object
 {
 public:
-	void Construct(ResourceManager* _resourceManager) override;
+	void Construct();
 
 	void Tick(size_t frameID) override {};
-	void Draw() override {};
 	void EndPlay(EndPlayReason reason) override;
 
 	void SetScore(const int value) { actualScore = value; }
@@ -52,10 +50,10 @@ protected:
 
 // Represents the main player and exposes all the functions for its full work. 
 // Works also as a bullet manager and orchestrate them
-class Player : public Object
+class Player : public Actor
 {
 public:
-	void Construct(ResourceManager* _resourceManager) override;
+	void Construct(ResourceManager* resourceManager);
 
 	void Tick(size_t frameID) override;
 
@@ -64,23 +62,19 @@ public:
 	static constexpr int ammoCount = 10;
 	std::array<Bullet, ammoCount>& GetAmmo() { return ammo; }
 
-	void SetVFXSystem(VFXSystem* _vfxSystem) { vfxSystem = _vfxSystem; }
-
 protected:
 	std::array<Bullet, ammoCount> ammo;
 
 	int bulletID = 0;
 	int cooldownTimer = 0;
 
-	VFXSystem* vfxSystem = nullptr;
-
 	bool CheckShouldShoot();
 
-	void UpdatePosition(float frameID);
+	void UpdatePosition(size_t frameID);
 
-	void LoadAmmo();
+	void ConstructAmmo(ResourceManager* resourceManager);
 
-	void UpdateAmmo(float frameID);
+	void UpdateAmmo(size_t frameID);
 
 	void Shoot();
 
@@ -90,7 +84,7 @@ protected:
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Object representating the enemy playing against the Player object
-class Enemy : public Object
+class Enemy : public Actor
 {
 public:
 	Enemy() {}
@@ -102,7 +96,7 @@ public:
 		SetBaseLocation(_ID);
 	}
 
-	void Construct(ResourceManager* _resourceManager) override;
+	void Construct(ResourceManager* resourceManager, VFXSystem* vfxSystem);
 	void Tick(size_t frameID) override;
 	void EndPlay(EndPlayReason reason) override;
 
@@ -117,13 +111,15 @@ public:
 
 	void SetBaseLocation(const int seed)
 	{
-		baseX = static_cast<float>((seed % 10) * 60 + StartX);
-		baseY = static_cast<float>((seed / 10) * 60 + StartY);
+		baseLocation.x = static_cast<float>((seed % 10) * 60 + StartX);
+		baseLocation.y = static_cast<float>((seed / 10) * 60 + StartY);
 	}
 
-	int GetReward() const { return killReward; }
+	Vector2D GetBaseLocation() const { return baseLocation; }
 
-	void SetVFXSystem(VFXSystem* _vfxSystem) { vfxSystem = _vfxSystem; }
+	void SetFormationOffset(Vector2D value) { formationOffset = value; }
+
+	int GetReward() const { return killReward; }
 
 protected:
 	VFXSystem* vfxSystem = nullptr;
@@ -150,11 +146,9 @@ protected:
 
 	int ID = 0;
 
-	float baseX = 0.0f;
-	float baseY = 0.0f;
-
-	float offsetX = 0.0f;
-	float offsetY = 0.0f;
+	Vector2D baseLocation = Vector2D(0.0f);
+	Vector2D animOffset = Vector2D(0.0f);
+	Vector2D formationOffset = Vector2D(0.0f);
 
 	static constexpr float StartX = 120.0f;
 	static constexpr float StartY = 130.0f;
@@ -168,14 +162,12 @@ protected:
 class EnemyManager : public Object
 {
 public:
-	void Construct(ResourceManager* _resourceManager) override;
+	void Construct(ResourceManager* resourceManager, VFXSystem* vfxSystem);
 
-	void Tick(size_t frameID) override;
-
-	void Draw() override;
+	void Draw();
 
 	void BeginPlay() override;
-
+	void Tick(size_t frameID) override;
 	void EndPlay(EndPlayReason reason) override;
 
 	auto& GetEnemies() { return enemies; }
@@ -187,11 +179,23 @@ public:
 
 	int GetMaxEnemyCount() const { return maxEnemyCount; };
 
-	void SetVFXSystem(VFXSystem* _vfxSystem);
+	void UpdateFormationSpeed();
+
+	int GetAliveEnemyCount() const;
 
 protected:
 	VFXSystem* vfxSystem = nullptr;
 
 	static constexpr int maxEnemyCount = 50;
 	std::array<Enemy, maxEnemyCount> enemies;
+
+	void UpdateFormation();
+	bool HasFormationReachedScreenEdge() const;
+
+	Vector2D formationOffset = Vector2D(0.0f);
+	float formationSpeed = 0.0f;
+	const float dropDistance = 20.0f;
+	const Vector2D formationSpeedRange = Vector2D(0.8f, 3.0f); // min, max
+	
+	float movementDirection = 1.0f;
 };
