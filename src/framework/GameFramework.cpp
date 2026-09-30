@@ -4,8 +4,8 @@
 #include <math.h>
 #include <direct.h>
 #include <malloc.h>
-#include "fmod/api/inc/fmod.h"
-#pragma comment(lib,"lib/fmod/api/lib/fmodvc.lib")
+#include "../../third_party/fmod/api/inc/fmod.h"
+#pragma comment(lib,"third_party/fmod/api/lib/fmodvc.lib")
 #pragma comment(lib,"d3d9.lib")
 #pragma comment(lib,"d3dx9.lib")
 

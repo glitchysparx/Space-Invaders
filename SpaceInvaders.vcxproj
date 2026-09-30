@@ -53,7 +53,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>lib/dx/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>third_party\fmod\api\inc;third_party/dx/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -64,16 +64,19 @@
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)SpaceInvaders.exe</OutputFile>
-      <AdditionalLibraryDirectories>lib/dx/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>third_party\fmod\api\lib;third_party/dx/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)SpaceInvaders.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /Y /I "$(ProjectDir)runtime\*.dll" "$(TargetDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>lib/dx/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>third_party\fmod\api\inc;third_party/dx/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader />
@@ -82,39 +85,37 @@
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)SpaceInvaders.exe</OutputFile>
-      <AdditionalLibraryDirectories>lib/dx/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>third_party\fmod\api\lib;third_party/dx/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /Y /I "$(ProjectDir)runtime\*.dll" "$(TargetDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="lib\game\effects\effectSystem.cpp" />
-    <ClCompile Include="lib\game\effects\gameEffects.cpp" />
-    <ClCompile Include="lib\game\gameplayObjects\gameplayObjects.cpp" />
-    <ClCompile Include="lib\game\gameplayObjects\gameWorld.cpp" />
-    <ClCompile Include="lib\game\gameplayObjects\object.cpp" />
-    <ClCompile Include="lib\game\ui\hud.cpp" />
-    <ClCompile Include="lib\game\utils\utils.cpp" />
-    <ClCompile Include="lib\GameFramework.cpp" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\framework\GameFramework.cpp" />
+    <ClCompile Include="src\game\effects\effectSystem.cpp" />
+    <ClCompile Include="src\game\effects\gameEffects.cpp" />
+    <ClCompile Include="src\game\gameplay\gameplayObjects.cpp" />
+    <ClCompile Include="src\game\gameplay\gameWorld.cpp" />
+    <ClCompile Include="src\game\gameplay\object.cpp" />
+    <ClCompile Include="src\game\ui\hud.cpp" />
+    <ClCompile Include="src\game\utils\utils.cpp" />
+    <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="lib\game\effects\effectSystem.h" />
-    <ClInclude Include="lib\game\effects\gameEffects.h" />
-    <ClInclude Include="lib\game\gameplayObjects\gameplayObjects.h" />
-    <ClInclude Include="lib\game\gameplayObjects\gameWorld.h" />
-    <ClInclude Include="lib\game\gameplayObjects\object.h" />
-    <ClInclude Include="lib\game\ui\hud.h" />
-    <ClInclude Include="lib\game\utils\utils.h" />
-    <ClInclude Include="lib\GameFramework.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="d3dx9_28.dll" />
-    <None Include="fmod.dll" />
-    <None Include="SpaceInvaders.vcproj" />
+    <ClInclude Include="src\framework\GameFramework.h" />
+    <ClInclude Include="src\game\effects\effectSystem.h" />
+    <ClInclude Include="src\game\effects\gameEffects.h" />
+    <ClInclude Include="src\game\gameplay\gameplayObjects.h" />
+    <ClInclude Include="src\game\gameplay\gameWorld.h" />
+    <ClInclude Include="src\game\gameplay\object.h" />
+    <ClInclude Include="src\game\ui\hud.h" />
+    <ClInclude Include="src\game\utils\utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
