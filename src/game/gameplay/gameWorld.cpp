@@ -225,7 +225,7 @@ void BackgroundSound::PlayVictory()
 		return;
 	}
 
-	SoundHandler sound = resourceManager->GetSound("sounds/sfx/victory.wav", false);
+	SoundHandler sound = resourceManager->GetSound("assets/sounds/sfx/victory.wav", false);
 	StopMusic();
 	volume = 1.f;
 	musicHandle = PlaySnd(sound, volume);
@@ -239,7 +239,7 @@ void BackgroundSound::PlayGameover()
 		return;
 	}
 
-	SoundHandler sound = resourceManager->GetSound("sounds/sfx/gameover.wav", false);
+	SoundHandler sound = resourceManager->GetSound("assets/sounds/sfx/gameover.wav", false);
 	StopMusic();
 	volume = 1.f;
 	musicHandle = PlaySnd(sound, volume);
@@ -247,7 +247,7 @@ void BackgroundSound::PlayGameover()
 
 void BackgroundSound::PlayGameplay()
 {
-	path = "sounds/music/energetic-background-music.wav"; 
+	path = "assets/sounds/music/energetic-background-music.wav"; 
 	volume = 0.7f;
 	musicHandle = PlayMusic(path, volume);
 }

@@ -5,8 +5,8 @@ void Bullet::Construct(ResourceManager* resourceManager)
 {
 	if (!resourceManager || sprite) { return; }
 
-	sprite = resourceManager->GetSprite("gfx/characters/bullet.png");
-	soundShoot = resourceManager->GetSound("sounds/sfx/laserShoot.wav", false);
+	sprite = resourceManager->GetSprite("assets/gfx/characters/bullet.png");
+	soundShoot = resourceManager->GetSound("assets/sounds/sfx/laserShoot.wav", false);
 
 	bCollisionEnabled = true;
 	size = Vector2D(16.f);
@@ -98,7 +98,7 @@ void Player::Construct(ResourceManager* resourceManager)
 {
 	if (!resourceManager || sprite) { return; }
 
-	sprite = resourceManager->GetSprite("gfx/characters/Big Invader.png");
+	sprite = resourceManager->GetSprite("assets/gfx/characters/Big Invader.png");
 
 	ConstructAmmo(resourceManager);
 
@@ -207,8 +207,8 @@ void Enemy::Construct(ResourceManager* resourceManager, VFXSystem* vfxSystem)
 
 	this->vfxSystem = vfxSystem;
 
-	sprite = resourceManager->GetSprite("gfx/characters/Little Invader.png");
-	soundExplosion = resourceManager->GetSound("sounds/sfx/collision.wav", false);
+	sprite = resourceManager->GetSprite("assets/gfx/characters/Little Invader.png");
+	soundExplosion = resourceManager->GetSound("assets/sounds/sfx/collision.wav", false);
 
 	bCollisionEnabled = true;
 	tint = Color::Red;

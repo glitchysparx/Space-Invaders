@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../GameFramework.h"
+#include "../../framework/GameFramework.h"
 #include <cstring>
 #include <Windows.h>
 #include <map>
