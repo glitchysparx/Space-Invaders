@@ -13,7 +13,7 @@ void Bullet::Construct(ResourceManager* resourceManager)
 	collisionSize = size;
 }
 
-void Bullet::Tick(size_t frameID)
+void Bullet::OnTick(size_t frameID)
 {
 	if (!IsAlive()) { return; }
 
@@ -26,7 +26,7 @@ void Bullet::Tick(size_t frameID)
 	location.y -= 4.f;
 }
 
-void Bullet::BeginPlay()
+void Bullet::OnBeginPlay()
 {
 	if (IsAlive()) { return; }
 	Object::BeginPlay();
@@ -43,7 +43,7 @@ void ScoreSystem::Construct()
 	highScore = LoadHighScore();
 }
 
-void ScoreSystem::EndPlay(EndPlayReason reason)
+void ScoreSystem::OnEndPlay(EndPlayReason reason)
 {
 	// To cache the actual score value if it is higher than previous score
 	int lastHighScore = LoadHighScore();
@@ -109,7 +109,7 @@ void Player::Construct(ResourceManager* resourceManager)
 	collisionSize = size;
 }
 
-void Player::Tick(size_t frameID)
+void Player::OnTick(size_t frameID)
 {
 	if (!IsAlive()) { return; }
 
@@ -214,10 +214,8 @@ void Enemy::Construct(ResourceManager* resourceManager, VFXSystem* vfxSystem)
 	tint = Color::Red;
 }
 
-void Enemy::Tick(size_t frameID)
+void Enemy::OnTick(size_t frameID)
 {
-	if (!IsAlive()) { return; }
-
 	UpdateLocation(frameID);
 }
 
@@ -289,10 +287,8 @@ void EnemyManager::Construct(ResourceManager* resourceManager, VFXSystem* vfxSys
 	}
 }
 
-void EnemyManager::Tick(size_t frameID)
+void EnemyManager::OnTick(size_t frameID)
 {
-	if (!IsAlive()) { return; }
-
 	UpdateFormation();
 
 	for (Enemy& enemy : enemies)
@@ -312,9 +308,8 @@ void EnemyManager::Draw()
 	}
 }
 
-void EnemyManager::BeginPlay()
+void EnemyManager::OnBeginPlay()
 {
-	if (IsAlive()) { return; }
 	Object::BeginPlay();
 
 	for (Enemy& enemy : enemies)
@@ -322,13 +317,11 @@ void EnemyManager::BeginPlay()
 		enemy.BeginPlay();
 	}
 
-	UpdateFormationSpeed();
+	UpdateFormationStepSize();
 }
 
-void EnemyManager::EndPlay(EndPlayReason reason)
+void EnemyManager::OnEndPlay(EndPlayReason reason)
 {
-	if (!IsAlive()) { return; }
-
 	for (Enemy& enemy : enemies)
 	{
 		enemy.EndPlay(reason);
@@ -337,11 +330,11 @@ void EnemyManager::EndPlay(EndPlayReason reason)
 	Object::EndPlay(reason);
 }
 
-void EnemyManager::UpdateFormationSpeed()
+void EnemyManager::UpdateFormationStepSize()
 {
 	float aliveRatio = static_cast<float>(GetAliveEnemyCount()) / static_cast<float>(maxEnemyCount);
 
-	formationSpeed = formationSpeedRange.y -(formationSpeedRange.y - formationSpeedRange.x) * aliveRatio;
+	xStepSize = xStepSizeRange.y - (xStepSizeRange.y - xStepSizeRange.x) * aliveRatio;
 }
 
 int EnemyManager::GetAliveEnemyCount() const
@@ -358,16 +351,16 @@ int EnemyManager::GetAliveEnemyCount() const
 
 void EnemyManager::UpdateFormation()
 {
-	formationOffset.x += formationSpeed * movementDirection;
+	formationOffset.x += xStepSize * movementDirection;
 
-	if (HasFormationReachedScreenEdge())
+	if (HasReachedBoundary())
 	{
 		movementDirection *= -1;
-		formationOffset.y += dropDistance;
+		formationOffset.y += yStepSize;
 	}
 }
 
-bool EnemyManager::HasFormationReachedScreenEdge() const
+bool EnemyManager::HasReachedBoundary() const
 {
 	float minX = FLT_MAX;
 	float maxX = -FLT_MAX;

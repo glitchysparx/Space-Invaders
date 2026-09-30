@@ -34,23 +34,12 @@ class GameWorld : public Object
 public:
 	void Construct(ResourceManager* resourceManager);
 
-	void BeginPlay() override;
-
-	void Tick(size_t frameID) override;
-
 	void Draw();
 
-	void EndPlay(EndPlayReason reason) override;
-
 protected:
-	Player player;
-	EnemyManager enemyManager;
-	ScoreSystem scoreSystem;
-	HUD hud;
-	VFXSystem vfxSystem;
-
-	GameStatus status;
-	BackgroundSound backgroundSound;
+	void OnBeginPlay() override;
+	void OnTick(size_t frameID) override;
+	void OnEndPlay(EndPlayReason reason) override;
 
 	void CheckCollisions();
 
@@ -74,4 +63,13 @@ protected:
 	void OnGameover();
 
 	void TickGameplay(const size_t frameID);
+
+	Player player;
+	EnemyManager enemyManager;
+	ScoreSystem scoreSystem;
+	HUD hud;
+	VFXSystem vfxSystem;
+
+	GameStatus status;
+	BackgroundSound backgroundSound;
 };

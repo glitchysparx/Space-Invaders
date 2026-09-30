@@ -11,8 +11,6 @@ class TitleRenderer : public Actor
 public:
 	void Construct(ResourceManager* resourceManager);
 
-	void Tick(size_t frameID) override;
-
 	void Draw() override;
 
 	inline float GetLetterLocationX(const int letterID)
@@ -21,6 +19,8 @@ public:
 	}
 
 protected:
+	void OnTick(size_t frameID) override;
+
 	static constexpr int letterCount = 14;
 	std::array<SpriteHandler, letterCount> letters{};
 
@@ -50,7 +50,7 @@ public:
 		highScore = value;
 	}
 
-	void EndPlay(EndPlayReason reason) override;
+	void OnEndPlay(EndPlayReason reason) override;
 
 protected:
 	int score = 0;
@@ -84,15 +84,14 @@ class FinalStatusRenderer : public Actor
 public:
 	void Construct();
 
-	void Tick(size_t frameID) override;
-
 	void Draw() override;
 
 	void ReceiveStatus(GameStatus::Status value);
 
-	void EndPlay(EndPlayReason reason) override;
-
 protected:
+	void OnTick(size_t frameID) override;
+	void OnEndPlay(EndPlayReason reason) override;
+
 	GameStatus::Status status = GameStatus::Status::Ready;
 	TextRenderer textRenderer;
 	char* textValue = nullptr;
@@ -110,13 +109,7 @@ class HUD : public Object
 public:
 	void Construct(ResourceManager* resourceManager);
 
-	void Tick(size_t frameID) override;
-
 	void Draw();
-
-	void BeginPlay() override;
-
-	void EndPlay(EndPlayReason reason) override;
 
 	void SetStatus(GameStatus::Status status) { finalStatus.ReceiveStatus(status); }
 	void SetScore(const int value)
@@ -140,6 +133,10 @@ public:
 	}
 
 protected:
+	void OnTick(size_t frameID) override;
+	void OnBeginPlay() override;
+	void OnEndPlay(EndPlayReason reason) override;
+
 	ScreenFrameRenderer screenFrame;
 	TitleRenderer title;
 	ScoreRenderer score;

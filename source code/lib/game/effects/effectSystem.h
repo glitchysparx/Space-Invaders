@@ -39,8 +39,6 @@ public:
 
 	void Construct(ResourceManager* resourceManager);
 
-	void Tick(size_t frameID) override;
-
 	void Draw() override;
 
 	const AnimationFrame& GetActualFrame() const;
@@ -48,6 +46,8 @@ public:
 	bool IsAnimationFinished() const { return ticksSinceSpawn > animLength; }
 
 protected:
+	void OnTick(size_t frameID) override;
+
 	std::vector<AnimationFrame> animationFrames;
 	size_t currentFrameIndex = 0;
 
@@ -68,8 +68,6 @@ class VFXSystem : public Object
 public:
 	void Construct(ResourceManager* resourceManager);
 
-	void Tick(size_t frameID) override;
-
 	void Draw();
 
 	void PlayEffect(std::unique_ptr<Effect> effect);
@@ -77,6 +75,8 @@ public:
 	void EndPlay(EndPlayReason reason);
 
 protected:
+	void OnTick(size_t frameID) override;
+
 	std::vector<std::unique_ptr<Effect>> effects;
 
 	ResourceManager* resourceManager = nullptr;

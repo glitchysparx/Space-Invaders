@@ -36,23 +36,21 @@ class Object
 public:
 	virtual ~Object() = 0;
 
-	virtual void Tick(size_t frameID) {}
+	void Tick(size_t frameID);
 
 	// Object is considered alive only at this step
-	virtual void BeginPlay() 
-	{
-		bIsAlive = true;
-	};
+	virtual void BeginPlay();
 
 	// Makes the object dead but leaves it still constructed
-	virtual void EndPlay(EndPlayReason reason)
-	{
-		bIsAlive = false;
-	}
+	virtual void EndPlay(EndPlayReason reason);
 
 	bool IsAlive() const { return bIsAlive; }
 
 protected:
+	virtual void OnTick(size_t frameID) {}
+	virtual void OnBeginPlay() {}
+	virtual void OnEndPlay(EndPlayReason reason) {}
+	
 	bool bIsAlive = false;
 };
 

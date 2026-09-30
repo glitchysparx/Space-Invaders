@@ -17,9 +17,8 @@ void GameWorld::Construct(ResourceManager* resourceManager)
 	hud.SetHighScore(scoreSystem.GetHighScore());
 }
 
-void GameWorld::BeginPlay()
+void GameWorld::OnBeginPlay()
 {
-	if (IsAlive()) { return; }
 	Object::BeginPlay();
 
 	vfxSystem.BeginPlay();
@@ -33,7 +32,7 @@ void GameWorld::BeginPlay()
 	OnGameStarted();
 }
 
-void GameWorld::Tick(size_t frameID)
+void GameWorld::OnTick(size_t frameID)
 {
 	// The previous tick is finished only at the moment when a new tick started
 	status.EndTick();
@@ -60,7 +59,7 @@ void GameWorld::Draw()
 	hud.DrawResult();
 }
 
-void GameWorld::EndPlay(EndPlayReason reason)
+void GameWorld::OnEndPlay(EndPlayReason reason)
 {
 	player.EndPlay(reason);
 	enemyManager.EndPlay(reason);
@@ -105,7 +104,7 @@ void GameWorld::CheckPlayerBulletsAgainstEnemies()
 			{
 				bullet.EndPlay(EndPlayReason::Destroyed);
 				enemy.EndPlay(EndPlayReason::Destroyed);
-				enemyManager.UpdateFormationSpeed();
+				enemyManager.UpdateFormationStepSize();
 				scoreSystem.AddScore(enemy.GetReward());
 				hud.SetScore(scoreSystem.GetScore());
 				break;

@@ -15,7 +15,7 @@ void FinalStatusRenderer::Construct()
 	location = Vector2D(0.f, 280.f);
 }
 
-void FinalStatusRenderer::Tick(size_t frameID)
+void FinalStatusRenderer::OnTick(size_t frameID)
 {
 	if (!IsAlive()) { return; }
 
@@ -55,7 +55,7 @@ void FinalStatusRenderer::ReceiveStatus(GameStatus::Status value)
 	}
 }
 
-void FinalStatusRenderer::EndPlay(EndPlayReason reason)
+void FinalStatusRenderer::OnEndPlay(EndPlayReason reason)
 {
 	textRenderer.ReleaseFonts();
 	Object::EndPlay(reason);
@@ -89,7 +89,7 @@ void HUD::Construct(ResourceManager* resourceManager)
 	finalStatus.Construct();
 }
 
-void HUD::Tick(size_t frameID)
+void HUD::OnTick(size_t frameID)
 {
 	if (!IsAlive()) { return; }
 
@@ -108,7 +108,7 @@ void HUD::Draw()
 	score.Draw();
 }
 
-void HUD::BeginPlay()
+void HUD::OnBeginPlay()
 {
 	if (IsAlive()) { return; }
 	Object::BeginPlay();
@@ -118,7 +118,7 @@ void HUD::BeginPlay()
 	score.BeginPlay();
 }
 
-void HUD::EndPlay(EndPlayReason reason)
+void HUD::OnEndPlay(EndPlayReason reason)
 {
 	title.EndPlay(reason);
 	screenFrame.EndPlay(reason);
@@ -152,7 +152,7 @@ void TitleRenderer::Construct(ResourceManager* resourceManager)
 	size = Vector2D(32.f);
 }
 
-void TitleRenderer::Tick(size_t frameID)
+void TitleRenderer::OnTick(size_t frameID)
 {
 	angle = sin(frameID * 0.1) * 0.1;
 }
@@ -192,7 +192,7 @@ void ScoreRenderer::Draw()
 	textRenderer.EndTextBatch();
 }
 
-void ScoreRenderer::EndPlay(EndPlayReason reason)
+void ScoreRenderer::OnEndPlay(EndPlayReason reason)
 {
 	textRenderer.ReleaseFonts();
 	Object::EndPlay(reason);

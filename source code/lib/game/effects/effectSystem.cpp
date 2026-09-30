@@ -10,7 +10,7 @@ void Effect::Construct(ResourceManager* resourceManager)
 	OnPostConstruct();
 }
 
-void Effect::Tick(size_t frameID)
+void Effect::OnTick(size_t frameID)
 {
 	if (IsAnimationFinished())
 	{
@@ -56,10 +56,8 @@ void VFXSystem::Construct(ResourceManager* resourceManager)
 	this->resourceManager = resourceManager;
 }
 
-void VFXSystem::Tick(size_t frameID)
+void VFXSystem::OnTick(size_t frameID)
 {
-	if (!IsAlive()) { return; }
-
 	for (auto it = effects.begin(); it != effects.end(); )
 	{
 		Effect* effect = it->get();

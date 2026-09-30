@@ -22,6 +22,26 @@ bool AABB::Intersects(const AABB& a, const AABB& b)
 
 Object::~Object() = default;
 
+void Object::Tick(size_t frameID)
+{
+	if (!IsAlive()) { return; }
+	OnTick(frameID);
+}
+
+void Object::BeginPlay()
+{
+	if (IsAlive()) { return; }
+	bIsAlive = true;
+	OnBeginPlay();
+}
+
+void Object::EndPlay(EndPlayReason reason)
+{
+	if (!IsAlive()) { return; }
+	bIsAlive = false;
+	OnEndPlay(reason);
+}
+
 
 
 Actor::~Actor() = default;

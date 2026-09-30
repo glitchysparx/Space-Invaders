@@ -12,10 +12,10 @@ class Bullet : public Actor
 public:
 	void Construct(ResourceManager* _resourceManager);
 
-	void Tick(size_t frameID) override;
-	void BeginPlay() override;
-
 protected:
+	void OnTick(size_t frameID) override;
+	void OnBeginPlay() override;
+
 	SoundHandler soundShoot = nullptr;
 };
 
@@ -27,15 +27,14 @@ class ScoreSystem : public Object
 public:
 	void Construct();
 
-	void Tick(size_t frameID) override {};
-	void EndPlay(EndPlayReason reason) override;
-
 	void SetScore(const int value) { actualScore = value; }
 	int GetScore() const { return actualScore; }
 	void AddScore(const int value) { actualScore += value; }
 	int GetHighScore() const { return highScore; }
 	
 protected:
+	void OnEndPlay(EndPlayReason reason) override;
+
 	int actualScore = 0;
 	int highScore = 0;
 
@@ -55,18 +54,13 @@ class Player : public Actor
 public:
 	void Construct(ResourceManager* resourceManager);
 
-	void Tick(size_t frameID) override;
-
 	void Draw() override;
 
 	static constexpr int ammoCount = 10;
 	std::array<Bullet, ammoCount>& GetAmmo() { return ammo; }
 
 protected:
-	std::array<Bullet, ammoCount> ammo;
-
-	int bulletID = 0;
-	int cooldownTimer = 0;
+	void OnTick(size_t frameID) override;
 
 	bool CheckShouldShoot();
 
@@ -79,6 +73,11 @@ protected:
 	void Shoot();
 
 	void DrawAmmo();
+
+	std::array<Bullet, ammoCount> ammo;
+
+	int bulletID = 0;
+	int cooldownTimer = 0;
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -97,7 +96,6 @@ public:
 	}
 
 	void Construct(ResourceManager* resourceManager, VFXSystem* vfxSystem);
-	void Tick(size_t frameID) override;
 	void EndPlay(EndPlayReason reason) override;
 
 	int GetID() const { return ID; }
@@ -122,8 +120,7 @@ public:
 	int GetReward() const { return killReward; }
 
 protected:
-	VFXSystem* vfxSystem = nullptr;
-	SoundHandler soundExplosion = nullptr;
+	void OnTick(size_t frameID) override;
 
 	void UpdateLocation(size_t frameID);
 
@@ -143,6 +140,9 @@ protected:
 		static constexpr int SizeVariation = 17;
 		return (BaseSize + (seed) % SizeVariation);
 	}
+
+	VFXSystem* vfxSystem = nullptr;
+	SoundHandler soundExplosion = nullptr;
 
 	int ID = 0;
 
@@ -166,10 +166,6 @@ public:
 
 	void Draw();
 
-	void BeginPlay() override;
-	void Tick(size_t frameID) override;
-	void EndPlay(EndPlayReason reason) override;
-
 	auto& GetEnemies() { return enemies; }
 
 	void DestroyEnemy(size_t ID)
@@ -179,23 +175,28 @@ public:
 
 	int GetMaxEnemyCount() const { return maxEnemyCount; };
 
-	void UpdateFormationSpeed();
+	void UpdateFormationStepSize();
 
 	int GetAliveEnemyCount() const;
 
 protected:
+	void OnBeginPlay() override;
+	void OnTick(size_t frameID) override;
+	void OnEndPlay(EndPlayReason reason) override;
+
+	void UpdateFormation();
+	bool HasReachedBoundary() const;
+
 	VFXSystem* vfxSystem = nullptr;
 
 	static constexpr int maxEnemyCount = 50;
 	std::array<Enemy, maxEnemyCount> enemies;
 
-	void UpdateFormation();
-	bool HasFormationReachedScreenEdge() const;
-
+	// absolute offset of all enemies' positions from their initial locations
 	Vector2D formationOffset = Vector2D(0.0f);
-	float formationSpeed = 0.0f;
-	const float dropDistance = 20.0f;
-	const Vector2D formationSpeedRange = Vector2D(0.8f, 3.0f); // min, max
+	float xStepSize = 0.0f;
+	const float yStepSize = 20.0f;
+	const Vector2D xStepSizeRange = Vector2D(0.8f, 3.0f); // min, max
 	
 	float movementDirection = 1.0f;
 };
