@@ -18,3 +18,7 @@ x86/
 *.tlog
 *.exe
 *.dll
+
+# explicitly allow the runtime DLLs
+!runtime/
+!runtime/*.dll
