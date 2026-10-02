@@ -96,7 +96,6 @@ public:
 	}
 
 	void Construct(ResourceManager* resourceManager, VFXSystem* vfxSystem);
-	void EndPlay(EndPlayReason reason) override;
 
 	int GetID() const { return ID; }
 	void SetID(int _ID) { ID = _ID; }
@@ -115,12 +114,13 @@ public:
 
 	Vector2D GetBaseLocation() const { return baseLocation; }
 
-	void SetFormationOffset(Vector2D value) { formationOffset = value; }
+	void OnFormationStep(Vector2D newFormationOffset);
 
 	int GetReward() const { return killReward; }
 
 protected:
 	void OnTick(size_t frameID) override;
+	void OnEndPlay(EndPlayReason reason) override;
 
 	void UpdateLocation(size_t frameID);
 
@@ -143,6 +143,8 @@ protected:
 
 	VFXSystem* vfxSystem = nullptr;
 	SoundHandler soundExplosion = nullptr;
+	SpriteAnimation animation;
+	ResourceManager* resourceManager = nullptr;
 
 	int ID = 0;
 
@@ -196,7 +198,9 @@ protected:
 	Vector2D formationOffset = Vector2D(0.0f);
 	float xStepSize = 0.0f;
 	const float yStepSize = 20.0f;
-	const Vector2D xStepSizeRange = Vector2D(0.8f, 3.0f); // min, max
+	const Vector2D xStepSizeRange = Vector2D(10.f, 40.f); // min, max
 	
-	float movementDirection = 1.0f;
+	float formationMovementDirection = 1.0f;
+	size_t framesPerFormationStep = 40;
+	const Vector2D framesPerFormationRange = Vector2D(10.f, 40.f); // max, min
 };

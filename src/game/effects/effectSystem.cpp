@@ -7,44 +7,25 @@ void Effect::Construct(ResourceManager* resourceManager)
 	this->resourceManager = resourceManager;
 
 	OnConstruct();
-	OnPostConstruct();
 }
 
 void Effect::OnTick(size_t frameID)
 {
-	if (IsAnimationFinished())
+	if (animation.IsAnimationFinished())
 	{
-		++ticksSinceSpawn;
+		EndPlay(EndPlayReason::Destroyed);
 		return;
 	}
 
-	if (ticksSinceSpawn > uniformFrameDuration * (currentFrameIndex + 1))
-	{
-		++currentFrameIndex;
-	}
-
-	++ticksSinceSpawn;
+	animation.Update();
 }
 
 void Effect::Draw()
 {
-	auto& frame = GetActualFrame();
+	auto& frame = animation.GetCurrentFrame();
 	sprite = resourceManager->GetSprite(frame.imagePath);
 	Vector2D targetLocation = location + frame.offset;
 	DrawSprite(sprite, targetLocation.x, targetLocation.y, frame.size.x/2, frame.size.y/2, frame.angle, frame.tint);
-}
-
-const AnimationFrame& Effect::GetActualFrame() const
-{
-	assert(!animationFrames.empty());
-	assert(currentFrameIndex < animationFrames.size());
-
-	return animationFrames[currentFrameIndex];
-}
-
-void Effect::OnPostConstruct()
-{
-	animLength = animationFrames.size() * uniformFrameDuration;
 }
 
 
@@ -64,13 +45,6 @@ void VFXSystem::OnTick(size_t frameID)
 
 		if (!effect->IsAlive())
 		{
-			it = effects.erase(it);
-			continue;
-		}
-
-		if (effect->IsAnimationFinished())
-		{
-			effect->EndPlay(EndPlayReason::Destroyed);
 			it = effects.erase(it);
 			continue;
 		}
@@ -97,14 +71,10 @@ void VFXSystem::PlayEffect(std::unique_ptr<Effect> effect)
 	effects.push_back(std::move(effect));
 }
 
-void VFXSystem::EndPlay(EndPlayReason reason)
+void VFXSystem::OnEndPlay(EndPlayReason reason)
 {
-	if (!IsAlive()) { return; }
-
 	for (const auto& effect : effects)
 	{
 		effect->EndPlay(reason);
 	}
-
-	Object::EndPlay(reason);
 }

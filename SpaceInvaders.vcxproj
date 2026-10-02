@@ -98,6 +98,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\framework\GameFramework.cpp" />
+    <ClCompile Include="src\game\effects\animation.cpp" />
     <ClCompile Include="src\game\effects\effectSystem.cpp" />
     <ClCompile Include="src\game\effects\gameEffects.cpp" />
     <ClCompile Include="src\game\gameplay\gameplayObjects.cpp" />
@@ -109,6 +110,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\framework\GameFramework.h" />
+    <ClInclude Include="src\game\effects\animation.h" />
     <ClInclude Include="src\game\effects\effectSystem.h" />
     <ClInclude Include="src\game\effects\gameEffects.h" />
     <ClInclude Include="src\game\gameplay\gameplayObjects.h" />

@@ -19,8 +19,6 @@ void GameWorld::Construct(ResourceManager* resourceManager)
 
 void GameWorld::OnBeginPlay()
 {
-	Object::BeginPlay();
-
 	vfxSystem.BeginPlay();
 	player.BeginPlay();
 	enemyManager.BeginPlay();
@@ -66,7 +64,6 @@ void GameWorld::OnEndPlay(EndPlayReason reason)
 	scoreSystem.EndPlay(reason);
 	hud.EndPlay(reason);
 	vfxSystem.EndPlay(reason);
-	Object::EndPlay(reason);
 }
 
 void GameWorld::CheckCollisions()

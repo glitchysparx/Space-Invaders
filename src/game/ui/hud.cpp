@@ -17,8 +17,6 @@ void FinalStatusRenderer::Construct()
 
 void FinalStatusRenderer::OnTick(size_t frameID)
 {
-	if (!IsAlive()) { return; }
-
 	ExecuteTextAnimation(frameID);
 }
 
@@ -58,7 +56,6 @@ void FinalStatusRenderer::ReceiveStatus(GameStatus::Status value)
 void FinalStatusRenderer::OnEndPlay(EndPlayReason reason)
 {
 	textRenderer.ReleaseFonts();
-	Object::EndPlay(reason);
 }
 
 void FinalStatusRenderer::ExecuteTextAnimation(size_t frameID)
@@ -91,8 +88,6 @@ void HUD::Construct(ResourceManager* resourceManager)
 
 void HUD::OnTick(size_t frameID)
 {
-	if (!IsAlive()) { return; }
-
 	title.Tick(frameID);
 	screenFrame.Tick(frameID);
 	score.Tick(frameID);
@@ -110,9 +105,6 @@ void HUD::Draw()
 
 void HUD::OnBeginPlay()
 {
-	if (IsAlive()) { return; }
-	Object::BeginPlay();
-
 	title.BeginPlay();
 	screenFrame.BeginPlay();
 	score.BeginPlay();
@@ -124,7 +116,6 @@ void HUD::OnEndPlay(EndPlayReason reason)
 	screenFrame.EndPlay(reason);
 	score.EndPlay(reason);
 	finalStatus.EndPlay(reason);
-	Object::EndPlay(reason);
 }
 
 
@@ -195,6 +186,5 @@ void ScoreRenderer::Draw()
 void ScoreRenderer::OnEndPlay(EndPlayReason reason)
 {
 	textRenderer.ReleaseFonts();
-	Object::EndPlay(reason);
 }
 

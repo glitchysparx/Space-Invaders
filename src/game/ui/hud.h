@@ -50,9 +50,9 @@ public:
 		highScore = value;
 	}
 
+protected:
 	void OnEndPlay(EndPlayReason reason) override;
 
-protected:
 	int score = 0;
 	int highScore = 0;
 

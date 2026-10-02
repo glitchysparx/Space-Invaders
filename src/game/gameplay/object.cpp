@@ -74,8 +74,7 @@ bool Actor::IsFullyOnScreen(Vector2D targetLocation) const
 	return IsVectorOnScreen(LU) && IsVectorOnScreen(RB);
 }
 
-void Actor::EndPlay(EndPlayReason reason)
+void Actor::OnEndPlay(EndPlayReason reason)
 {
-	Object::EndPlay(reason);
 	bCollisionEnabled = false;
 }

@@ -51,8 +51,6 @@ void ScoreSystem::OnEndPlay(EndPlayReason reason)
 	{
 		SaveHighScore(actualScore);
 	}
-
-	Object::EndPlay(reason);
 }
 
 int ScoreSystem::LoadHighScore()
@@ -206,12 +204,25 @@ void Enemy::Construct(ResourceManager* resourceManager, VFXSystem* vfxSystem)
 	if (!resourceManager || sprite) { return; }
 
 	this->vfxSystem = vfxSystem;
+	this->resourceManager = resourceManager;
 
-	sprite = resourceManager->GetSprite("assets/gfx/characters/Little Invader.png");
+	animation.AddFrame(AnimationFrame("assets/gfx/characters/LittleInvader_0.png", size));
+	animation.AddFrame(AnimationFrame("assets/gfx/characters/LittleInvader_2.png", size));
+
+	animation.SetLooping(true);
+
+	sprite = resourceManager->GetSprite(animation.GetCurrentFrame().imagePath);
 	soundExplosion = resourceManager->GetSound("assets/sounds/sfx/collision.wav", false);
 
 	bCollisionEnabled = true;
 	tint = Color::Red;
+}
+
+void Enemy::OnFormationStep(Vector2D newFormationOffset)
+{
+	formationOffset = newFormationOffset;
+	animation.AdvanceFrame();
+	sprite = resourceManager->GetSprite(animation.GetCurrentFrame().imagePath);
 }
 
 void Enemy::OnTick(size_t frameID)
@@ -219,10 +230,8 @@ void Enemy::OnTick(size_t frameID)
 	UpdateLocation(frameID);
 }
 
-void Enemy::EndPlay(EndPlayReason reason)
+void Enemy::OnEndPlay(EndPlayReason reason)
 {
-	if (!IsAlive()) { return; }
-
 	if (reason == EndPlayReason::Destroyed) 
 	{ 
 		assert(vfxSystem);
@@ -232,14 +241,14 @@ void Enemy::EndPlay(EndPlayReason reason)
 		PlaySnd(soundExplosion, soundVolume);
 	}
 
-	Object::EndPlay(reason);
+	Actor::OnEndPlay(reason);
 }
 
 void Enemy::UpdateLocation(size_t frameID)
 {
 	animOffset = Vector2D(0.0f);
 
-	const int n1 = frameID + ID * ID + ID * ID * ID;
+	/*const int n1 = frameID + ID * ID + ID * ID * ID;
 	const int n2 = frameID + ID + ID * ID + ID * ID * ID * 3;
 
 	if (IsOrbitPhaseActive(n1))
@@ -251,7 +260,7 @@ void Enemy::UpdateLocation(size_t frameID)
 	if (IsDivePhaseActive(n2))
 	{
 		animOffset.y += (1.0f - cosf((n2 & 0xff) / 256.0f * 2.0f * PI)) * (150.0f + ((ID * ID) % 9));
-	}
+	}*/
 
 	Vector2D tmpLocation;
 	tmpLocation = baseLocation + animOffset + formationOffset;
@@ -289,11 +298,15 @@ void EnemyManager::Construct(ResourceManager* resourceManager, VFXSystem* vfxSys
 
 void EnemyManager::OnTick(size_t frameID)
 {
-	UpdateFormation();
+	// Update formation every n-th frame
+	if (frameID % framesPerFormationStep == 0)
+	{
+		UpdateFormation();
+	}
 
+	// Regularly tick all enemies
 	for (Enemy& enemy : enemies)
 	{
-		enemy.SetFormationOffset(formationOffset);
 		enemy.Tick(frameID);
 	}
 }
@@ -310,8 +323,6 @@ void EnemyManager::Draw()
 
 void EnemyManager::OnBeginPlay()
 {
-	Object::BeginPlay();
-
 	for (Enemy& enemy : enemies)
 	{
 		enemy.BeginPlay();
@@ -326,8 +337,6 @@ void EnemyManager::OnEndPlay(EndPlayReason reason)
 	{
 		enemy.EndPlay(reason);
 	}
-
-	Object::EndPlay(reason);
 }
 
 void EnemyManager::UpdateFormationStepSize()
@@ -335,6 +344,9 @@ void EnemyManager::UpdateFormationStepSize()
 	float aliveRatio = static_cast<float>(GetAliveEnemyCount()) / static_cast<float>(maxEnemyCount);
 
 	xStepSize = xStepSizeRange.y - (xStepSizeRange.y - xStepSizeRange.x) * aliveRatio;
+
+	framesPerFormationStep = static_cast<size_t>(framesPerFormationRange.x +
+							(framesPerFormationRange.y - framesPerFormationRange.x) * aliveRatio);
 }
 
 int EnemyManager::GetAliveEnemyCount() const
@@ -351,12 +363,19 @@ int EnemyManager::GetAliveEnemyCount() const
 
 void EnemyManager::UpdateFormation()
 {
-	formationOffset.x += xStepSize * movementDirection;
+	formationOffset.x += xStepSize * formationMovementDirection;
 
 	if (HasReachedBoundary())
 	{
-		movementDirection *= -1;
+		formationMovementDirection *= -1;
 		formationOffset.y += yStepSize;
+	}
+
+	for (Enemy& enemy : enemies)
+	{
+		if (!enemy.IsAlive()) { continue; }
+
+		enemy.OnFormationStep(formationOffset);
 	}
 }
 

@@ -2,6 +2,7 @@
 
 #include "../utils/utils.h"
 #include <vector>
+#include <cassert>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -39,10 +40,10 @@ public:
 	void Tick(size_t frameID);
 
 	// Object is considered alive only at this step
-	virtual void BeginPlay();
+	void BeginPlay();
 
 	// Makes the object dead but leaves it still constructed
-	virtual void EndPlay(EndPlayReason reason);
+	void EndPlay(EndPlayReason reason);
 
 	bool IsAlive() const { return bIsAlive; }
 
@@ -56,13 +57,11 @@ protected:
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Base class for spatial objects
+// A spatial object represented in the game world.
 class Actor : public Object
 {
 public:
 	~Actor() override = 0;
-
-	void EndPlay(EndPlayReason reason) override;
 
 	// Render the sprite
 	virtual void Draw();
@@ -91,6 +90,8 @@ public:
 	bool IsFullyOnScreen(Vector2D targetLocation) const;
 
 protected:
+	void OnEndPlay(EndPlayReason reason) override;
+
 	bool bCollisionEnabled = false;
 
 	SpriteHandler sprite = nullptr;
