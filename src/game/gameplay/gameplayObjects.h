@@ -12,11 +12,23 @@ class Bullet : public Actor
 public:
 	void Construct(ResourceManager* _resourceManager);
 
+	void SetMovementStep(const float value) { movementStep = value; }
+
+	void SetMovementDirection(const Vector2D value) { movementDirection = value; }
+
+	void SetImage(const std::string path) { imagePath = path; }
+
 protected:
 	void OnTick(size_t frameID) override;
 	void OnBeginPlay() override;
 
 	SoundHandler soundShoot = nullptr;
+
+	float movementStep = 4.f;
+	Vector2D movementDirection = Vector2D(0.f, 1.f); // x-axis, y-axis
+
+	std::string imagePath = "assets/gfx/characters/bullet.png";
+	std::string soundPath = "assets/sounds/sfx/laserShoot.wav";
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -35,14 +47,14 @@ public:
 protected:
 	void OnEndPlay(EndPlayReason reason) override;
 
+	int LoadHighScore();
+	void SaveHighScore(const int value);
+
 	int actualScore = 0;
 	int highScore = 0;
 
 	static constexpr char* highScoreFolder = "cache";
 	static constexpr char* highScoreFile = "highscore.txt";
-
-	int LoadHighScore();
-	void SaveHighScore(const int value);
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -118,6 +130,8 @@ public:
 
 	int GetReward() const { return killReward; }
 
+	void Shoot();
+
 protected:
 	void OnTick(size_t frameID) override;
 	void OnEndPlay(EndPlayReason reason) override;
@@ -169,11 +183,6 @@ public:
 	void Draw();
 
 	auto& GetEnemies() { return enemies; }
-
-	void DestroyEnemy(size_t ID)
-	{
-		enemies.at(ID).EndPlay(EndPlayReason::Destroyed);
-	}
 
 	int GetMaxEnemyCount() const { return maxEnemyCount; };
 

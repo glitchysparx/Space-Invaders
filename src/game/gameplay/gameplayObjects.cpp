@@ -5,8 +5,8 @@ void Bullet::Construct(ResourceManager* resourceManager)
 {
 	if (!resourceManager || sprite) { return; }
 
-	sprite = resourceManager->GetSprite("assets/gfx/characters/bullet.png");
-	soundShoot = resourceManager->GetSound("assets/sounds/sfx/laserShoot.wav", false);
+	sprite = resourceManager->GetSprite(imagePath);
+	soundShoot = resourceManager->GetSound(soundPath, false);
 
 	bCollisionEnabled = true;
 	size = Vector2D(16.f);
@@ -15,22 +15,20 @@ void Bullet::Construct(ResourceManager* resourceManager)
 
 void Bullet::OnTick(size_t frameID)
 {
-	if (!IsAlive()) { return; }
+	const Vector2D targetLocation = location - movementDirection * movementStep;
 
-	const float targetLocationY = location.y - 4;
-	if (targetLocationY <= 100)
+	// Check whether the desired location is located on the rendered part of the screen 
+	if (!IsFullyOnScreen(targetLocation))
 	{
 		EndPlay(EndPlayReason::Destroyed);
+		return;
 	}
 
-	location.y -= 4.f;
+	location = targetLocation;
 }
 
 void Bullet::OnBeginPlay()
 {
-	if (IsAlive()) { return; }
-	Object::BeginPlay();
-
 	bCollisionEnabled = true;
 	const float soundVolume = 1.f;
 	PlaySnd(soundShoot, soundVolume);
@@ -109,8 +107,6 @@ void Player::Construct(ResourceManager* resourceManager)
 
 void Player::OnTick(size_t frameID)
 {
-	if (!IsAlive()) { return; }
-
 	UpdatePosition(frameID);
 
 	if (CheckShouldShoot())
@@ -247,20 +243,6 @@ void Enemy::OnEndPlay(EndPlayReason reason)
 void Enemy::UpdateLocation(size_t frameID)
 {
 	animOffset = Vector2D(0.0f);
-
-	/*const int n1 = frameID + ID * ID + ID * ID * ID;
-	const int n2 = frameID + ID + ID * ID + ID * ID * ID * 3;
-
-	if (IsOrbitPhaseActive(n1))
-	{
-		animOffset.x += (1.0f - cosf((n1 & 0x7f) / 64.0f * 2.0f * PI)) * (20.0f + ((ID * ID) % 9));
-		animOffset.y += sinf((n1 & 0x7f) / 64.0f * 2.0f * PI) * (20.0f + ((ID * ID) % 9));
-	}
-
-	if (IsDivePhaseActive(n2))
-	{
-		animOffset.y += (1.0f - cosf((n2 & 0xff) / 256.0f * 2.0f * PI)) * (150.0f + ((ID * ID) % 9));
-	}*/
 
 	Vector2D tmpLocation;
 	tmpLocation = baseLocation + animOffset + formationOffset;

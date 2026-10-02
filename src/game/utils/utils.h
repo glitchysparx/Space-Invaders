@@ -50,6 +50,11 @@ struct Vector2D
 	{
 		return Vector2D(x / value, y / value);
 	}
+
+	Vector2D operator*(const float value) const
+	{
+		return Vector2D(x * value, y * value);
+	}
 };
 
 bool IsVectorOnScreen(Vector2D value);
