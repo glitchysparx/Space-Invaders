@@ -1,8 +1,13 @@
 #pragma once
 
-#include "../utils/utils.h"
+
+#include "../graphics/Colors.h"
+#include "Vector2D.h"
+#include "ResourceManager.h"
 #include <vector>
 #include <cassert>
+#include <fstream>
+#include <array>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

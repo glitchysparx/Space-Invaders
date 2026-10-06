@@ -1,27 +1,4 @@
-#include "utils.h"
-
-bool IsVectorOnScreen(Vector2D value)
-{
-	const bool bIsXValid = (value.x >= 0) && (value.x <= gameWindow.width);
-	const bool bIsYValid = (value.y >= 0) && (value.y <= gameWindow.height);
-
-	return bIsXValid && bIsYValid;
-}
-
-void LogFloat(const char* label, float value)
-{
-	char buffer[128];
-	sprintf_s(buffer, "%s%f\n", label, value);
-	OutputDebugStringA(buffer);
-}
-
-bool WantClose()
-{
-	if (WantQuit()) { return true; }
-	return IsKeyDown(VK_ESCAPE);
-}
-
-
+#include "ResourceManager.h"
 
 SpriteHandler ResourceManager::GetSprite(const std::string& path)
 {
@@ -68,15 +45,4 @@ SoundHandler ResourceManager::GetSound(const std::string& path, bool looped)
 	// Cache target sound for future quick search
 	sounds[tag] = targetSound;
 	return targetSound;
-}
-
-
-
-void GameStatus::Set(Status value)
-{
-	if (statusCurrent == value) { return; }
-
-	statusPrevious = statusCurrent;
-	statusCurrent = value;
-	bIsStatusChanged = true;
 }

@@ -295,7 +295,6 @@ LARGE_INTEGER starttime;
 LARGE_INTEGER freq;
 extern HWND hWnd;
 HWND hWnd;
-Window gameWindow;
 
 INT WINAPI WinMain( HINSTANCE hInst, HINSTANCE, LPSTR cmd, INT )
 {

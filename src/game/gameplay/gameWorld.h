@@ -1,30 +1,14 @@
 #pragma once
 
-#include "../ui/hud.h"
-#include "gameplayObjects.h"
+#include "GameStatus.h"
+#include "../audio/BackgroundSound.h"
 
+#include "Player.h"
+#include "../ui/HUD.h"
+#include "ScoreSystem.h"
+#include "EnemyManager.h"
+#include "../effects/VFXSystem.h"
 
-class BackgroundSound 
-{
-public:
-	void Construct(ResourceManager* _resourceManager) 
-	{
-		resourceManager = _resourceManager;
-	}
-
-	void PlayVictory();
-	void PlayGameover();
-	void PlayGameplay();
-
-protected:
-	SoundHandler sound = nullptr;
-	char* path = nullptr;
-	float volume = 1.f;
-
-	int musicHandle = 0;
-
-	ResourceManager* resourceManager = nullptr;
-};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

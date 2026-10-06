@@ -97,27 +97,47 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\framework\core\Debug.cpp" />
+    <ClCompile Include="src\framework\core\ResourceManager.cpp" />
     <ClCompile Include="src\framework\GameFramework.cpp" />
-    <ClCompile Include="src\game\effects\animation.cpp" />
-    <ClCompile Include="src\game\effects\effectSystem.cpp" />
-    <ClCompile Include="src\game\effects\gameEffects.cpp" />
-    <ClCompile Include="src\game\gameplay\gameplayObjects.cpp" />
-    <ClCompile Include="src\game\gameplay\gameWorld.cpp" />
-    <ClCompile Include="src\game\gameplay\object.cpp" />
-    <ClCompile Include="src\game\ui\hud.cpp" />
-    <ClCompile Include="src\game\utils\utils.cpp" />
+    <ClCompile Include="src\framework\graphics\SpriteAnimation.cpp" />
+    <ClCompile Include="src\game\audio\BackgroundSound.cpp" />
+    <ClCompile Include="src\game\effects\Effect.cpp" />
+    <ClCompile Include="src\game\effects\VFXSystem.cpp" />
+    <ClCompile Include="src\game\effects\GameEffects.cpp" />
+    <ClCompile Include="src\game\gameplay\Bullet.cpp" />
+    <ClCompile Include="src\game\gameplay\Enemy.cpp" />
+    <ClCompile Include="src\game\gameplay\EnemyManager.cpp" />
+    <ClCompile Include="src\game\gameplay\ScoreSystem.cpp" />
+    <ClCompile Include="src\game\gameplay\GameStatus.cpp" />
+    <ClCompile Include="src\game\gameplay\GameWorld.cpp" />
+    <ClCompile Include="src\framework\core\Object.cpp" />
+    <ClCompile Include="src\game\gameplay\Player.cpp" />
+    <ClCompile Include="src\game\ui\HUD.cpp" />
+    <ClCompile Include="src\framework\graphics\Window.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\framework\core\Debug.h" />
+    <ClInclude Include="src\framework\core\ResourceManager.h" />
+    <ClInclude Include="src\framework\core\Vector2D.h" />
     <ClInclude Include="src\framework\GameFramework.h" />
-    <ClInclude Include="src\game\effects\animation.h" />
-    <ClInclude Include="src\game\effects\effectSystem.h" />
-    <ClInclude Include="src\game\effects\gameEffects.h" />
-    <ClInclude Include="src\game\gameplay\gameplayObjects.h" />
-    <ClInclude Include="src\game\gameplay\gameWorld.h" />
-    <ClInclude Include="src\game\gameplay\object.h" />
-    <ClInclude Include="src\game\ui\hud.h" />
-    <ClInclude Include="src\game\utils\utils.h" />
+    <ClInclude Include="src\framework\graphics\Colors.h" />
+    <ClInclude Include="src\framework\graphics\SpriteAnimation.h" />
+    <ClInclude Include="src\game\audio\BackgroundSound.h" />
+    <ClInclude Include="src\game\effects\Effect.h" />
+    <ClInclude Include="src\game\effects\VFXSystem.h" />
+    <ClInclude Include="src\game\effects\GameEffects.h" />
+    <ClInclude Include="src\game\gameplay\Bullet.h" />
+    <ClInclude Include="src\game\gameplay\Enemy.h" />
+    <ClInclude Include="src\game\gameplay\EnemyManager.h" />
+    <ClInclude Include="src\game\gameplay\ScoreSystem.h" />
+    <ClInclude Include="src\game\gameplay\GameStatus.h" />
+    <ClInclude Include="src\game\gameplay\GameWorld.h" />
+    <ClInclude Include="src\framework\core\Object.h" />
+    <ClInclude Include="src\game\gameplay\Player.h" />
+    <ClInclude Include="src\game\ui\HUD.h" />
+    <ClInclude Include="src\framework\graphics\Window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

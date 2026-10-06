@@ -1,6 +1,6 @@
 #pragma once
 
-#include "effectSystem.h"
+#include "Effect.h"
 
 class ExplosionEffect : public Effect
 {

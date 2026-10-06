@@ -1,4 +1,5 @@
-#include "object.h"
+#include "Object.h"
+#include "../graphics/Window.h"
 
 AABB AABB::Construct(float xLocation, float yLocation, float halfWidth, float halfHeight)
 {
@@ -63,7 +64,7 @@ bool Actor::IsFullyOnScreen() const
 	const Vector2D LU = location - size/2;
 	const Vector2D RB = location + size/2;
 
-	return IsVectorOnScreen(LU) && IsVectorOnScreen(RB);
+	return IsPointOnScreen(LU) && IsPointOnScreen(RB);
 }
 
 bool Actor::IsFullyOnScreen(Vector2D targetLocation) const
@@ -71,7 +72,7 @@ bool Actor::IsFullyOnScreen(Vector2D targetLocation) const
 	const Vector2D LU = targetLocation - size/2;
 	const Vector2D RB = targetLocation + size/2;
 
-	return IsVectorOnScreen(LU) && IsVectorOnScreen(RB);
+	return IsPointOnScreen(LU) && IsPointOnScreen(RB);
 }
 
 void Actor::OnEndPlay(EndPlayReason reason)

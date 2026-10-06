@@ -1,6 +1,11 @@
 #pragma once
 
-#include "../gameplay/object.h"
+
+#include "../core/Vector2D.h"
+#include "Colors.h"
+#include <string>
+#include <vector>
+#include <cassert>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -75,4 +80,3 @@ private:
 
     size_t ticksOnCurrentFrame = 0;
 };
-

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "graphics/Window.h"
 #include <windows.h>
 #include <d3d9.h>
 #include <d3dx9.h>
@@ -10,17 +11,6 @@ typedef unsigned int	u32;
 
 #define PI ((float)3.1415926535)
 #define MA_RELEASE(x) {int c=0;if (x) c=(x)->Release();x=NULL;}
-
-struct Window
-{
-	int width = 800;
-	int height = 600;
-	const char name[22] = "Space Invaders Remake";
-
-	size_t frameID = 0;
-};
-
-extern Window gameWindow;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // 'system' - screen is always 800 x 600

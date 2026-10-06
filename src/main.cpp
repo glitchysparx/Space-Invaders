@@ -1,6 +1,13 @@
-#include "game/gameplay/gameWorld.h"
+#include "game/gameplay/GameWorld.h"
 #include <math.h>
 #include <windows.h>
+
+// Check whether the player asks for game exiting
+static bool WantClose()
+{
+	if (WantQuit()) { return true; }
+	return IsKeyDown(VK_ESCAPE);
+}
 
 void Game()
 {

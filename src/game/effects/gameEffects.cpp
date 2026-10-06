@@ -1,4 +1,4 @@
-#include "gameEffects.h"
+#include "GameEffects.h"
 
 
 void ExplosionEffect::OnConstruct()

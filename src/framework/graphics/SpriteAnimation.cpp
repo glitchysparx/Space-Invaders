@@ -1,4 +1,4 @@
-#include "animation.h"
+#include "SpriteAnimation.h"
 
 void SpriteAnimation::Update()
 {

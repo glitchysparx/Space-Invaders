@@ -1,4 +1,6 @@
-#include "gameWorld.h"
+#include "GameWorld.h"
+#include "Bullet.h"
+#include "Enemy.h"
 
 
 void GameWorld::Construct(ResourceManager* resourceManager)
@@ -74,7 +76,7 @@ void GameWorld::CheckCollisions()
 	// 1. Brute force - check every bullet against every enemy each frame
 	// 2. Smart filters - reduce the number of candidate pairs
 	// For this game the brute force method should be enough. There are only 10 bullets and 50 enemies. 
-	// So, 10 * 50 = 500 checks per frame. 500 checks/frame × 60 = 30,000 checks/second. 
+	// So, 10 * 50 = 500 checks per frame. 500 checks/frame ï¿½ 60 = 30,000 checks/second.
 	// For such trivial AABB overlap tests, that is nothing on modern hardware
 
 	CheckPlayerBulletsAgainstEnemies();
@@ -87,22 +89,22 @@ void GameWorld::CheckPlayerBulletsAgainstEnemies()
 	auto& enemies = enemyManager.GetEnemies();
 
 	// Check every bullet against every enemy
-	for (Bullet& bullet : ammo)
+	for (auto& bullet : ammo)
 	{
-		if (!bullet.IsAlive()) { continue; }
+		if (!bullet->IsAlive()) { continue; }
 
-		const AABB bulletBounds = bullet.GetBounds();
+		const AABB bulletBounds = bullet->GetBounds();
 
-		for (Enemy& enemy : enemies)
+		for (auto& enemy : enemies)
 		{
-			if (!enemy.IsAlive()) { continue; }
+			if (!enemy->IsAlive()) { continue; }
 
-			if (AABB::Intersects(bulletBounds, enemy.GetBounds()))
+			if (AABB::Intersects(bulletBounds, enemy->GetBounds()))
 			{
-				bullet.EndPlay(EndPlayReason::Destroyed);
-				enemy.EndPlay(EndPlayReason::Destroyed);
+				bullet->EndPlay(EndPlayReason::Destroyed);
+				enemy->EndPlay(EndPlayReason::Destroyed);
 				enemyManager.UpdateFormationStepSize();
-				scoreSystem.AddScore(enemy.GetReward());
+				scoreSystem.AddScore(enemy->GetReward());
 				hud.SetScore(scoreSystem.GetScore());
 				break;
 			}
@@ -118,14 +120,14 @@ void GameWorld::CheckEnemiesAgainstPlayer()
 	auto& enemies = enemyManager.GetEnemies();
 
 	// Check every enemy against player
-	for (Enemy& enemy : enemies)
+	for (auto& enemy : enemies)
 	{
-		if (!enemy.IsAlive()) { continue; }
+		if (!enemy->IsAlive()) { continue; }
 
-		if (AABB::Intersects(playerBounds, enemy.GetBounds()))
+		if (AABB::Intersects(playerBounds, enemy->GetBounds()))
 		{
 			player.EndPlay(EndPlayReason::Destroyed);
-			enemy.EndPlay(EndPlayReason::Destroyed);
+			enemy->EndPlay(EndPlayReason::Destroyed);
 			break;
 		}
 	}
@@ -151,9 +153,9 @@ void GameWorld::UpdateGameStatus()
 bool GameWorld::AreEnemiesDefeated()
 {
 	auto& enemies = enemyManager.GetEnemies();
-	for (const Enemy& enemy : enemies)
+	for (const auto& enemy : enemies)
 	{
-		if (enemy.IsAlive()) { return false; }
+		if (enemy->IsAlive()) { return false; }
 	}
 	return true;
 }
@@ -210,41 +212,4 @@ void GameWorld::TickGameplay(const size_t frameID)
 
 	hud.Tick(frameID);
 	vfxSystem.Tick(frameID);
-}
-
-
-
-void BackgroundSound::PlayVictory()
-{
-	if (!resourceManager)
-	{
-		assert(resourceManager);
-		return;
-	}
-
-	SoundHandler sound = resourceManager->GetSound("assets/sounds/sfx/victory.wav", false);
-	StopMusic();
-	volume = 1.f;
-	musicHandle = PlaySnd(sound, volume);
-}
-
-void BackgroundSound::PlayGameover()
-{
-	if (!resourceManager)
-	{
-		assert(resourceManager);
-		return;
-	}
-
-	SoundHandler sound = resourceManager->GetSound("assets/sounds/sfx/gameover.wav", false);
-	StopMusic();
-	volume = 1.f;
-	musicHandle = PlaySnd(sound, volume);
-}
-
-void BackgroundSound::PlayGameplay()
-{
-	path = "assets/sounds/music/energetic-background-music.wav"; 
-	volume = 0.7f;
-	musicHandle = PlayMusic(path, volume);
 }
